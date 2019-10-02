@@ -209,6 +209,9 @@ const app = {
       d3.select('.prodcons-toggle-container')
         .style('margin-top', `${extraPadding}px`);
 
+      d3.select('.mix-order-toggle-container')
+        .style('margin-top', `${extraPadding}px`);
+
       d3.select('.flash-message .inner')
         .style('padding-top', `${extraPadding}px`);
 
@@ -1159,7 +1162,7 @@ function renderHistory(state) {
   countryHistoryMixGraph
     .electricityMixMode(electricityMixMode)
     .data(history);
-  
+
   zoneDetailsTimeSlider.data(history);
 
   // Update country table with all possible exchanges
@@ -1256,7 +1259,7 @@ function routeToPage(pageName, state) {
   d3.selectAll('.left-panel .faq-panel').classed('all-screens-hidden', pageName !== 'faq');
 
   d3.selectAll('.left-panel .left-panel-zone-details').classed('all-screens-hidden', pageName !== 'country');
-  
+
   // Hide map on small screens
   // It's important we show the map before rendering it to make sure
   // sizes are set properly
@@ -1328,7 +1331,7 @@ function centerOnZoneName(state, zoneName, zoomLevel) {
   if (zoomLevel) {
     // Remember to set center and zoom in case the map wasn't loaded yet
     zoneMap.setZoom(zoomLevel);
-    // If the panel is open the zoom doesn't appear perfectly centered because 
+    // If the panel is open the zoom doesn't appear perfectly centered because
     // it centers on the whole window and not just the visible map part.
     // something one could fix in the future. It's tricky because one has to project, unproject
     // and project again taking both starting and ending zoomlevel into account
@@ -1379,6 +1382,20 @@ observe(state => state.application.electricityMixMode, (electricityMixMode, stat
     );
   d3.select('a#production')
     .text(translation.translate(`country-panel.electricity${electricityMixMode}`));
+
+  d3.select('.mix-order-toggle-active-overlay')
+    .classed('newworld', electricityMixMode === 'mix-order-newworld')
+    .style('default', electricityMixMode === 'mix-order-newworld'
+      ? '0px'
+      : `${d3.select('.mix-order-toggle-item.mix-order-newworld').node().getBoundingClientRect().width + 4}px`)
+    .style('width', electricityMixMode === 'mix-order-newworld'
+      ? `${d3.select('.mix-order-toggle-item.mix-order-newworld').node().getBoundingClientRect().width}px`
+      : `${d3.select('.mix-order-toggle-item.mix-order-default').node().getBoundingClientRect().width}px`
+    );
+    /*
+  d3.select('a#default')
+    .text(translation.translate(`country-panel.electricity${electricityMixMode}`));
+*/
   document.getElementById('country-history-electricity-carbonintensity')
     .innerHTML = translation.translate(
       tableDisplayEmissions

@@ -84,7 +84,7 @@ line, path {
     /* That's the main loading overlay */
     background-image: url('../images/loading/loading64_FA.gif'), url('../images/loading/electricitymap-text.svg');
     background-position: calc(50% - 64px) center , center center;
-    background-repeat: no-repeat, no-repeat; 
+    background-repeat: no-repeat, no-repeat;
     background-size: 36px , 10rem;
     background-color: #FAFAFA;
     width: 100%;
@@ -182,7 +182,7 @@ line, path {
     position: relative;
     font-size: smaller;
     top: 0;
-    left: 0;  
+    left: 0;
     margin: 8px 0 2px 0;
 }
 
@@ -324,7 +324,7 @@ body {
 #header-content > div,
 #header-content > span {
     vertical-align: middle;
-} 
+}
 
 
 /* end HEADER */
@@ -543,7 +543,7 @@ body {
 }
 
 .country-table {
-    width: 100%;    
+    width: 100%;
 }
 .country-table-container {
     width: 100%;
@@ -823,7 +823,7 @@ body {
     border-radius: 14px;
     box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.10);
     display: flex;
-    height: 28px; 
+    height: 28px;
     flex-direction: row;
     justify-content: flex-end;
     align-content: center;
@@ -832,7 +832,7 @@ body {
 }
 
 .production-toggle-item {
-    font-size: 14px; 
+    font-size: 14px;
     line-height: 28px;
     padding: 0 12px;
     border-radius: 14px 4px 4px 14px;
@@ -848,7 +848,7 @@ body {
     position: absolute;
     left: 100px;
     background: #FFFFFF;
-    height: 28px; 
+    height: 28px;
     width: 110px;
     box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.15);
     z-index: 8;
@@ -869,7 +869,7 @@ body {
 }
 
 .production-toggle-info {
-    height: 28px; 
+    height: 28px;
     width: 28px;
     border-radius: 18px;
     background: #FFFFFF;
@@ -887,6 +887,109 @@ body {
 .production-toggle-info:hover {
     box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.2);
 }
+
+/* Style of mix order toggle */
+.mix-order-toggle-container{
+    top: 16px;
+}
+.mix-order-toggle-container {
+    position: absolute;
+    top: 100px;
+    right: 16px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.15);
+    height: 36px;
+    transition: all 0.4s;
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    background-color: #FAFAFA;
+    border-radius: 18px;
+}
+.mix-order-toggle-container:hover {
+    box-shadow: 2px 0px 20px 0px rgba(0,0,0,0.25);
+}
+
+
+.mix-order-toggle {
+    background: #F3F3F3;
+    border-radius: 14px;
+    box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.10);
+    display: flex;
+    height: 28px;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-content: center;
+    align-self: center;
+    margin: 0 8px 0 4px;
+}
+
+.mix-order-toggle-item {
+    font-size: 14px;
+    line-height: 28px;
+    padding: 0 12px;
+    border-radius: 14px 4px 4px 14px;
+    z-index: 9;
+}
+
+.mix-order-toggle-item:last-child{
+    padding: 0 10px;
+    border-radius: 4px 14px 14px 4px;
+}
+
+.mix-order-toggle-active-overlay {
+    position: absolute;
+    left: 100px;
+    background: #FFFFFF;
+    height: 28px;
+    width: 110px;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.15);
+    z-index: 8;
+    border-radius: 14px;
+    transition: all 0.4s;
+}
+.mix-order-toggle-active-overlay.prod {
+    left:0;
+    width: 100px;
+    border-radius: 14px;
+    margin: 0 8px 0 4px;
+}
+
+.mix-order-toggle-item.active {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.15);
+
+}
+
+.mix-order-toggle-info {
+    height: 28px;
+    width: 28px;
+    border-radius: 18px;
+    background: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-self: center;
+    margin: 0 4px;
+    box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.1);
+    font-weight: bold;
+    line-height: 28px;
+    transition: all 0.4s;
+}
+
+.mix-order-toggle-info:hover {
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.2);
+}
+
+
+
+
+
+
+
 
 /* override mapbox styling */
 .mapboxgl-ctrl-top-right {
@@ -1484,7 +1587,7 @@ div.highscore-button:hover {
     width: 100%;
 }
 
-.modal .modal-left-button-container { 
+.modal .modal-left-button-container {
     align-items: flex-start;
     margin-left: 10px;
 }
@@ -1562,7 +1665,7 @@ div.highscore-button:hover {
     background-color: white;
 }
 
-.modal .modal-body { 
+.modal .modal-body {
     flex: 1;
     position: relative;
     border-radius: 15px;
@@ -1680,7 +1783,7 @@ div.highscore-button:hover {
 
 .faq-header {
     display: flex;
-    flex-direction: row; 
+    flex-direction: row;
     margin-left: 15px;
     align-items: flex-end;
     height: 30px;
@@ -1771,7 +1874,7 @@ div.highscore-button:hover {
 }
 
 .zone-time-slider .time-slider-axis-container{
-    width: 85%;    
+    width: 85%;
     height: 20px;
     overflow: visible;
 }
@@ -1790,28 +1893,28 @@ div.highscore-button:hover {
     width: 95%;
     margin-top: 5px;
     height: 26px;
-    background: transparent; 
+    background: transparent;
     padding: 0;
     overflow: visible;
     border: none;
   }
-  
+
   .time-slider-input:focus {
-    outline: none;  
+    outline: none;
   }
 
 
 /* Sliders needs to be styled independently for different browsers:
   https://css-tricks.com/styling-cross-browser-compatible-range-inputs-css/
 */
-  
+
 /* WebKit/Blink */
 
 .time-slider-input::-webkit-slider-thumb {
     -webkit-appearance: none;
     height: 26px;
     width: 26px;
-    border-radius: 17px;    
+    border-radius: 17px;
     background: #ffffff;
     cursor: pointer;
     margin-top: -8px;
@@ -1833,7 +1936,7 @@ div.highscore-button:hover {
     background: #F3F3F3;
     box-shadow: inset 0 1px 4px 0 rgba(0, 0, 0, 0.10);
   }
-  
+
   /* .time-slider-input:focus::-webkit-slider-runnable-track {
     background: white;
   } */
@@ -1885,7 +1988,7 @@ div.highscore-button:hover {
   .time-slider-input:hover::-moz-range-thumb{
     box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.15);
   }
-  
+
   .time-slider-input::-moz-range-track {
     width: 100%;
     height: 6px;
@@ -1928,7 +2031,7 @@ div.highscore-button:hover {
     .left-panel {
         height: 100vh; /* Should only be set on desktop */
     }
-    
+
 }
 
 /* Small devices (phones, etc.) */
@@ -1975,7 +2078,7 @@ div.highscore-button:hover {
         top: 16px;
     }
     .layer-buttons-container{
-        top: 148px;   
+        top: 148px;
     }
 
     .mapboxgl-ctrl-top-right{
@@ -2005,7 +2108,7 @@ div.highscore-button:hover {
         margin: 0;
         display: block;
         overflow-y: scroll;
-        -webkit-overflow-scrolling: touch; 
+        -webkit-overflow-scrolling: touch;
        -moz-user-select: none; /* Selection disabled on firefox to avoid android "select all" button popping up when pressing graphs */
         margin-bottom: 60px; /* height of .zone-time-slider plus padding*/
     }
@@ -2153,7 +2256,7 @@ div.highscore-button:hover {
         background-color: #009800;
         color:white;
     }
-    
+
     .modal .modal-right-button.green:hover{
         background-color: #95f395;
         color: inherit;
@@ -2164,7 +2267,7 @@ div.highscore-button:hover {
     }
     .left-panel {
         padding-bottom: 0;
-    } 
+    }
 
 }
 
@@ -2175,11 +2278,10 @@ div::-webkit-scrollbar {
 }
 div::-webkit-scrollbar-track-piece {
     background: #F3f3f3;
-    border-radius: 3px; 
+    border-radius: 3px;
 }
 
 div::-webkit-scrollbar-thumb {
     background: lightgray;
     border-radius: 3px;
 }
-

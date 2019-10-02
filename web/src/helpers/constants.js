@@ -28,6 +28,22 @@ const modeOrder = [
   'oil',
   'unknown',
 ];
+
+const newWorldOrder = [
+  'solar',
+  'wind',
+  'hydro',
+  'hydro storage',
+  'battery storage',
+  'geothermal',
+  'biomass',
+  'gas',
+  'oil',
+  'coal',
+  'nuclear',
+  'unknown',
+];
+
 const PRODUCTION_MODES = modeOrder.filter(d => d.indexOf('storage') === -1);
 const STORAGE_MODES = modeOrder.filter(d => d.indexOf('storage') !== -1).map(d => d.replace(' storage', ''));
 

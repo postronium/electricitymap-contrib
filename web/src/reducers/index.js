@@ -25,6 +25,7 @@ const initialApplicationState = {
   selectLanguageShown: false,
   customDate: null,
   electricityMixMode: 'consumption',
+  electricityMixOrder: 'mix-order-default', // can be: mix-order-default, mix-order-newworld
   isCordova: window.isCordova,
   isEmbedded: window.top !== window.self,
   isLeftPanelCollapsed: false,
