@@ -13,15 +13,16 @@ export default class CircularGauge {
     this.radius = config.radius || '32';
     this.lineWidth = config.lineWidth || '6';
     this.fontSize = config.fontSize || '1rem';
+    this.colors = config.colors || ['rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(0,0,255)'];
 
     this.arc = d3.arc()
       .startAngle(0)
       .innerRadius(this.radius - this.lineWidth)
       .outerRadius(this.radius);
 
-    this.prevPercentage = 0;
+    this.prevPercentages = [0, 0, 0];
 
-    this.percentage = config.percentage || null;
+    this.percentages = config.percentage != undefined ? [config.percentage] : null;
 
     // main gauge component
 
@@ -47,41 +48,58 @@ export default class CircularGauge {
       .attr('class', 'foreground')
       .attr('d', this.arc.endAngle(0)); // starts filling from 0
 
+    this.foregroundLayers = this.colors.map(color => {
+        return gauge.append('path')
+            .attr('fill', color)
+            .attr('d', this.arc.endAngle(0));
+    });
+
+
+    const percentageSum = this.percentages != null ? this.percentages.reduce((p, sum) => sum+p) : 0;
+
     this.percentageText = gauge.append('text')
       .style('text-anchor', 'middle')
       .attr('dy', '0.4em')
       .style('font-weight', 'bold')
       .style('font-size', this.fontSize)
-      .text(this.percentage != null ? `${Math.round(this.percentage)}%` : '?');
+      .text(percentageSum != 0 ? `${Math.round(percentageSum)}%` : '?');
 
     this.draw();
   }
 
   draw() {
     const arc = this.arc;
-    const prevPercentage = this.prevPercentage != null ? this.prevPercentage / 100 : 0;
-    const percentage = this.percentage != null ? this.percentage / 100 : 0;
+    const prevPercentages = this.prevPercentages != null ? this.prevPercentages.map(p => p/100) : this.colors.map(c => 0);
+    const percentages = this.percentages != null ? this.percentages.map(p => p/100) : this.colors.map(c => 0);
 
-    const i = d3.interpolate(prevPercentage * 2 * Math.PI, 2 * Math.PI * (percentage));
 
-    this.foreground.transition()
-      .duration(500)
-      .attrTween(
-        'd',
-        () => t => arc.endAngle(i(t))(),
-      );
+    for (var i = 0; i < percentages.length; i++) {
+        const interpol = d3.interpolate(prevPercentages[i] * 2 * Math.PI, 2 * Math.PI * (percentages[i]));
+
+        this.foregroundLayers[i].transition()
+          .duration(500)
+          .attrTween(
+            'd',
+            () => t => arc.endAngle(interpol(t))(),
+          );
+    };
   }
 
-  setPercentage(percentage) {
-    if (this.percentage === percentage) {
+  setPercentage(percentages) {
+    if (this.percentages === percentages) {
       return;
     }
-    if (Number.isNaN(percentage)) {
+    if (percentages == null || !percentages.reduce((acc, p) => acc && !Number.isNaN(p), true)) {
       return;
     }
-    this.prevPercentage = this.percentage;
-    this.percentage = percentage;
-    this.percentageText.text(this.percentage != null ? `${Math.round(this.percentage)}%` : '?');
+    this.prevPercentages = this.percentages;
+    this.percentages = percentages;
+    if (this.percentages != null) {
+        const percentageSum = this.percentages.reduce((p, sum) => sum+p);
+        this.percentageText.text(`${Math.round(percentageSum)}%`);
+    } else {
+        this.percentageText.text('?');
+    }
     this.draw();
   }
 }
