@@ -204,7 +204,7 @@ module.exports.showMapCountry = function showMapCountry(tooltipInstance, country
     const hasFossilFuelData = fossilFuelRatio != null;
     if (hasFossilFuelData) {
       const fossilFuelPercent = fossilFuelRatio * 100;
-      lowCarbonGauge.setPercentage(Math.round(100 - fossilFuelPercent));
+      lowCarbonGauge.setPercentage([Math.round(100 - fossilFuelPercent)]);
       tooltip.select('.lowcarbon-percentage').text(Math.round(100 - fossilFuelPercent));
     } else {
       tooltip.select('.lowcarbon-percentage').text('?');
@@ -216,7 +216,7 @@ module.exports.showMapCountry = function showMapCountry(tooltipInstance, country
     const hasRenewableData = renewableRatio != null;
     if (hasRenewableData) {
       const renewablePercent = renewableRatio * 100;
-      renewableGauge.setPercentage(Math.round(renewablePercent));
+      renewableGauge.setPercentage([Math.round(renewablePercent)]);
       tooltip.select('.renewable-percentage').text(Math.round(renewablePercent));
     } else {
       tooltip.select('.renewable-percentage').text('?');
