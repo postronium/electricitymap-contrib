@@ -72,11 +72,18 @@ export default class CircularGauge {
     const prevPercentages = this.prevPercentages != null ? this.prevPercentages.map(p => p/100) : this.colors.map(c => 0);
     const percentages = this.percentages != null ? this.percentages.map(p => p/100) : this.colors.map(c => 0);
 
-
+    //this is to make the next arc start where the previous arc ends
+    var getArcEnd = function(prevPercent, i, percentages) {
+        var sum = 0;
+        for (var j = i; j >= 0; j--) sum += percentages[j];
+        return sum;
+    }
+    const previousArcEnds = prevPercentages.map(getArcEnd);
+    const nextArcEnds = percentages.map(getArcEnd);
     for (var i = 0; i < percentages.length; i++) {
-        const interpol = d3.interpolate(prevPercentages[i] * 2 * Math.PI, 2 * Math.PI * (percentages[i]));
+        const interpol = d3.interpolate(previousArcEnds[i] * 2 * Math.PI, 2 * Math.PI * (nextArcEnds[i]));
 
-        this.foregroundLayers[i].transition()
+        this.foregroundLayers[percentages.length-i-1].transition()
           .duration(500)
           .attrTween(
             'd',
