@@ -1009,14 +1009,14 @@ function renderGauges(state) {
       : d.fossilFuelRatioProduction;
     const countryLowCarbonPercentage = fossilFuelRatio != null ?
       100 - (fossilFuelRatio * 100) : null;
-    countryLowCarbonGauge.setPercentage([countryLowCarbonPercentage]);
+    countryLowCarbonGauge.setPercentage([countryLowCarbonPercentage, 15, 5]);
 
     const renewableRatio = state.application.electricityMixMode === 'consumption'
       ? d.renewableRatio
       : d.renewableRatioProduction;
     const countryRenewablePercentage = renewableRatio != null ?
       renewableRatio * 100 : null;
-    countryRenewableGauge.setPercentage([countryRenewablePercentage]);
+    countryRenewableGauge.setPercentage([countryRenewablePercentage, 15, 5]);
   }
 }
 
