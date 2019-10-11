@@ -26,6 +26,9 @@ const d3 = Object.assign(
   require('d3-interpolate'),
 );
 
+const LOW_CARB = ["nuclear", "geothermal", "biomass", "wind", "solar", "hydro"];
+const RENEWABLE = ["geothermal", "biomass", "wind", "solar", "hydro"];
+
 const moment = require('moment');
 
 // State management
@@ -148,10 +151,10 @@ const countryTooltip = new Tooltip('#country-tooltip');
 const exchangeTooltip = new Tooltip('#exchange-tooltip');
 const priceTooltip = new Tooltip('#price-tooltip');
 
-const countryLowCarbonGauge = new CircularGauge('country-lowcarbon-gauge');
-const countryRenewableGauge = new CircularGauge('country-renewable-gauge');
-const tooltipLowCarbonGauge = new CircularGauge('tooltip-country-lowcarbon-gauge');
-const tooltipRenewableGauge = new CircularGauge('tooltip-country-renewable-gauge');
+const countryLowCarbonGauge = new CircularGauge('country-lowcarbon-gauge', modeColor, modeOrder);
+const countryRenewableGauge = new CircularGauge('country-renewable-gauge', modeColor, modeOrder);
+const tooltipLowCarbonGauge = new CircularGauge('tooltip-country-lowcarbon-gauge', modeColor, modeOrder);
+const tooltipRenewableGauge = new CircularGauge('tooltip-country-renewable-gauge', modeColor, modeOrder);
 const contributorList = new ContributorList('.contributors');
 const referral = new Referral('.referral-link');
 
@@ -998,25 +1001,38 @@ function getCurrentZoneData(state) {
   return (state.data.histories[zoneName] || {})[i];
 }
 
+function getProductionPercentages(prodData, production) {
+    if (prodData == null) return null;
+    var orderedProduction = modeOrder.map(mode => prodData[mode] ? prodData[mode] : 0);
+    var prodSum = orderedProduction.reduce((sum, val) => sum + val, 0);
+    return orderedProduction
+            .map(prod => prod*100/prodSum)
+            .map((e, i) => (production.indexOf(modeOrder[i]) != -1) ? e : 0);
+}
+
 function renderGauges(state) {
   const d = getCurrentZoneData(state);
   if (!d) {
     countryLowCarbonGauge.setPercentage(null);
     countryRenewableGauge.setPercentage(null);
   } else {
+    var lowCarbPercentages = getProductionPercentages(d.production, LOW_CARB);
+    var renewablePercentages = getProductionPercentages(d.production, RENEWABLE);
+
+
     const fossilFuelRatio = state.application.electricityMixMode === 'consumption'
       ? d.fossilFuelRatio
       : d.fossilFuelRatioProduction;
     const countryLowCarbonPercentage = fossilFuelRatio != null ?
       100 - (fossilFuelRatio * 100) : null;
-    countryLowCarbonGauge.setPercentage([countryLowCarbonPercentage, 15, 5]);
+    countryLowCarbonGauge.setPercentage(lowCarbPercentages);
 
     const renewableRatio = state.application.electricityMixMode === 'consumption'
       ? d.renewableRatio
       : d.renewableRatioProduction;
     const countryRenewablePercentage = renewableRatio != null ?
       renewableRatio * 100 : null;
-    countryRenewableGauge.setPercentage([countryRenewablePercentage, 15, 5]);
+    countryRenewableGauge.setPercentage(renewablePercentages);
   }
 }
 
