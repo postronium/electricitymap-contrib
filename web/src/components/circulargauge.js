@@ -7,20 +7,22 @@ const d3 = Object.assign(
 );
 
 export default class CircularGauge {
-  constructor(selectorId, argConfig) {
+  constructor(selectorId, modeColors, modeOrder, argConfig) {
     const config = argConfig || {};
 
     this.radius = config.radius || '32';
     this.lineWidth = config.lineWidth || '6';
     this.fontSize = config.fontSize || '1rem';
-    this.colors = config.colors || ['rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(0,0,255)'];
+    //this.modeColors = config.modeColors || ['rgb(120, 205, 232)'];  //blue
+    this.MODE_COLORS = modeColors;
+    this.MODE_ORDER = modeOrder.slice();
 
     this.arc = d3.arc()
       .startAngle(0)
       .innerRadius(this.radius - this.lineWidth)
       .outerRadius(this.radius);
 
-    this.prevPercentages = [0, 0, 0];
+    this.prevPercentages = this.MODE_ORDER.map(c => 0);
 
     this.percentages = config.percentage != undefined ? [config.percentage] : null;
 
@@ -43,14 +45,10 @@ export default class CircularGauge {
       .attr('class', 'background')
       .attr('d', this.arc.endAngle(2 * Math.PI));
 
-    // foreground
-    this.foreground = gauge.append('path')
-      .attr('class', 'foreground')
-      .attr('d', this.arc.endAngle(0)); // starts filling from 0
-
-    this.foregroundLayers = this.colors.map(color => {
+    this.foregroundLayers = this.MODE_ORDER.reverse().map(mode => {
         return gauge.append('path')
-            .attr('fill', color)
+            .attr('class', mode)
+            .attr('fill', this.MODE_COLORS[mode])
             .attr('d', this.arc.endAngle(0));
     });
 
@@ -69,8 +67,8 @@ export default class CircularGauge {
 
   draw() {
     const arc = this.arc;
-    const prevPercentages = this.prevPercentages != null ? this.prevPercentages.map(p => p/100) : this.colors.map(c => 0);
-    const percentages = this.percentages != null ? this.percentages.map(p => p/100) : this.colors.map(c => 0);
+    const prevPercentages = this.prevPercentages != null ? this.prevPercentages.map(p => p/100) : this.MODE_ORDER.map(c => 0);
+    const percentages = this.percentages != null ? this.percentages.map(p => p/100) : this.MODE_ORDER.map(c => 0);
 
     //this is to make the next arc start where the previous arc ends
     var getArcEnd = function(prevPercent, i, percentages) {
@@ -96,13 +94,13 @@ export default class CircularGauge {
     if (this.percentages === percentages) {
       return;
     }
-    if (percentages == null || !percentages.reduce((acc, p) => acc && !Number.isNaN(p), true)) {
+    if (percentages == null || percentages.length == 0 || !percentages.reduce((acc, p) => acc && !Number.isNaN(p), true)) {
       return;
     }
     this.prevPercentages = this.percentages;
     this.percentages = percentages;
     if (this.percentages != null) {
-        const percentageSum = this.percentages.reduce((p, sum) => sum+p);
+        const percentageSum = this.percentages.reduce((p, sum) => sum+p, 0);
         this.percentageText.text(`${Math.round(percentageSum)}%`);
     } else {
         this.percentageText.text('?');
