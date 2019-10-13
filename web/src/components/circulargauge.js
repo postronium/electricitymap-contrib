@@ -78,16 +78,35 @@ export default class CircularGauge {
     }
     const previousArcEnds = prevPercentages.map(getArcEnd);
     const nextArcEnds = percentages.map(getArcEnd);
-    for (var i = 0; i < percentages.length; i++) {
-        const interpol = d3.interpolate(previousArcEnds[i] * 2 * Math.PI, 2 * Math.PI * (nextArcEnds[i]));
+    for (var i = 1; i < percentages.length; i++) {
+        const interpolStart = d3.interpolate(previousArcEnds[i-1] * 2 * Math.PI, 2 * Math.PI * nextArcEnds[i-1]);
+        const interpolEnd = d3.interpolate(previousArcEnds[i] * 2 * Math.PI, 2 * Math.PI * (nextArcEnds[i]));
 
         this.foregroundLayers[percentages.length-i-1].transition()
           .duration(500)
           .attrTween(
             'd',
-            () => t => arc.endAngle(interpol(t))(),
+            () => {
+                return (t) => {
+                    arc.startAngle(interpolStart(t))();
+                    return arc.endAngle(interpolEnd(t))();
+                }
+            }
           );
     };
+
+    const intpolEnd = d3.interpolate(previousArcEnds[0] * 2 * Math.PI, 2 * Math.PI * nextArcEnds[0]);
+    this.foregroundLayers[percentages.length-1].transition()
+      .duration(500)
+      .attrTween(
+        'd',
+        () => {
+            return (t) => {
+                arc.startAngle(0)();
+                return arc.endAngle(intpolEnd(t))();
+            }
+        }
+      );
   }
 
   setPercentage(percentages) {
