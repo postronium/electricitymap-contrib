@@ -1002,7 +1002,7 @@ function getCurrentZoneData(state) {
 }
 
 function getProductionPercentages(prodData, production) {
-    if (prodData == null) return null;
+    if (prodData == null) return [];
     var orderedProduction = modeOrder.map(mode => prodData[mode] ? prodData[mode] : 0);
     var prodSum = orderedProduction.reduce((sum, val) => sum + val, 0);
     return orderedProduction
@@ -1016,22 +1016,26 @@ function renderGauges(state) {
     countryLowCarbonGauge.setPercentage(null);
     countryRenewableGauge.setPercentage(null);
   } else {
-    var lowCarbPercentages = getProductionPercentages(d.production, LOW_CARB);
-    var renewablePercentages = getProductionPercentages(d.production, RENEWABLE);
+    //percentages of each type of production (inland) and sum
+    const lowCarbPercentages = getProductionPercentages(d.production, LOW_CARB);
+    const lowCarbProdSum = lowCarbPercentages.reduce((acc, e) => acc+e, 0);
+    const renewablePercentages = getProductionPercentages(d.production, RENEWABLE);
+    const renewableProdSum = renewablePercentages.reduce((acc, e) => acc+e, 0);
 
-
+    //calculate and add imported low carbon
     const fossilFuelRatio = state.application.electricityMixMode === 'consumption'
       ? d.fossilFuelRatio
       : d.fossilFuelRatioProduction;
-    const countryLowCarbonPercentage = fossilFuelRatio != null ?
-      100 - (fossilFuelRatio * 100) : null;
+    if (fossilFuelRatio != null)
+      lowCarbPercentages.push(100 - (fossilFuelRatio * 100) - lowCarbProdSum);
     countryLowCarbonGauge.setPercentage(lowCarbPercentages);
 
+    //calculate and add imported renewable
     const renewableRatio = state.application.electricityMixMode === 'consumption'
       ? d.renewableRatio
       : d.renewableRatioProduction;
-    const countryRenewablePercentage = renewableRatio != null ?
-      renewableRatio * 100 : null;
+    if (renewableRatio != null)
+      renewablePercentages.push(renewableRatio*100 - renewableProdSum);
     countryRenewableGauge.setPercentage(renewablePercentages);
   }
 }
