@@ -6,6 +6,8 @@ const d3 = Object.assign(
   require('d3-interpolate'),
 );
 
+const IMPORT_COLOR = ['rgb(120, 205, 232)'];  //blue
+
 export default class CircularGauge {
   constructor(selectorId, modeColors, modeOrder, argConfig) {
     const config = argConfig || {};
@@ -45,13 +47,16 @@ export default class CircularGauge {
       .attr('class', 'background')
       .attr('d', this.arc.endAngle(2 * Math.PI));
 
-    this.foregroundLayers = this.MODE_ORDER.reverse().map(mode => {
+    this.foregroundLayers = this.MODE_ORDER.map(mode => {
         return gauge.append('path')
-            .attr('class', mode)
-            .attr('fill', this.MODE_COLORS[mode])
-            .attr('d', this.arc.endAngle(0));
+          .attr('fill', this.MODE_COLORS[mode])
+          .attr('d', this.arc.endAngle(0));
     });
 
+    this.foregroundLayers.push(
+      gauge.append('path')
+        .attr('fill', IMPORT_COLOR)
+        .attr('d', this.arc.endAngle(0)));
 
     const percentageSum = this.percentages != null ? this.percentages.reduce((p, sum) => sum+p) : 0;
 
@@ -79,24 +84,24 @@ export default class CircularGauge {
     const previousArcEnds = prevPercentages.map(getArcEnd);
     const nextArcEnds = percentages.map(getArcEnd);
     for (var i = 1; i < percentages.length; i++) {
-        const interpolStart = d3.interpolate(previousArcEnds[i-1] * 2 * Math.PI, 2 * Math.PI * nextArcEnds[i-1]);
-        const interpolEnd = d3.interpolate(previousArcEnds[i] * 2 * Math.PI, 2 * Math.PI * (nextArcEnds[i]));
+      const interpolStart = d3.interpolate(previousArcEnds[i-1] * 2 * Math.PI, 2 * Math.PI * nextArcEnds[i-1]);
+      const interpolEnd = d3.interpolate(previousArcEnds[i] * 2 * Math.PI, 2 * Math.PI * (nextArcEnds[i]));
 
-        this.foregroundLayers[percentages.length-i-1].transition()
-          .duration(500)
-          .attrTween(
-            'd',
-            () => {
-                return (t) => {
-                    arc.startAngle(interpolStart(t))();
-                    return arc.endAngle(interpolEnd(t))();
-                }
+      this.foregroundLayers[i].transition()
+        .duration(500)
+        .attrTween(
+          'd',
+          () => {
+            return (t) => {
+              arc.startAngle(interpolStart(t))();
+              return arc.endAngle(interpolEnd(t))();
             }
-          );
+          }
+        );
     };
 
     const intpolEnd = d3.interpolate(previousArcEnds[0] * 2 * Math.PI, 2 * Math.PI * nextArcEnds[0]);
-    this.foregroundLayers[percentages.length-1].transition()
+    this.foregroundLayers[0].transition()
       .duration(500)
       .attrTween(
         'd',
@@ -108,7 +113,6 @@ export default class CircularGauge {
         }
       );
   }
-
   setPercentage(percentages) {
     if (this.percentages === percentages) {
       return;
@@ -119,10 +123,10 @@ export default class CircularGauge {
     this.prevPercentages = this.percentages;
     this.percentages = percentages;
     if (this.percentages != null) {
-        const percentageSum = this.percentages.reduce((p, sum) => sum+p, 0);
-        this.percentageText.text(`${Math.round(percentageSum)}%`);
+      const percentageSum = this.percentages.reduce((p, sum) => sum+p, 0);
+      this.percentageText.text(`${Math.round(percentageSum)}%`);
     } else {
-        this.percentageText.text('?');
+      this.percentageText.text('?');
     }
     this.draw();
   }
