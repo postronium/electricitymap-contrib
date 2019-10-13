@@ -28,9 +28,9 @@ export default class CircularGauge {
 
     this.percentages = config.percentage != undefined ? [config.percentage] : null;
 
-    // main gauge component
+    const that = this;
 
-    const gauge = d3.select(`#${selectorId}`).append('svg')
+    this.gauge = d3.select(`#${selectorId}`).append('svg')
       .attr('width', this.radius * 2)
       .attr('height', this.radius * 2)
       // .attr("width", '100%') // makes gauge auto-resize
@@ -43,29 +43,34 @@ export default class CircularGauge {
       .attr('class', 'circular-gauge');
 
     // background
-    this.background = gauge.append('path')
+    this.background = that.gauge.append('path')
       .attr('class', 'background')
       .attr('d', this.arc.endAngle(2 * Math.PI));
 
     this.foregroundLayers = this.MODE_ORDER.map(mode => {
-        return gauge.append('path')
+        return that.gauge.append('path')
           .attr('fill', this.MODE_COLORS[mode])
           .attr('d', this.arc.endAngle(0));
     });
 
     this.foregroundLayers.push(
-      gauge.append('path')
+      that.gauge.append('path')
         .attr('fill', IMPORT_COLOR)
         .attr('d', this.arc.endAngle(0)));
 
     const percentageSum = this.percentages != null ? this.percentages.reduce((p, sum) => sum+p) : 0;
 
-    this.percentageText = gauge.append('text')
+    this.percentageText = that.gauge.append('text')
       .style('text-anchor', 'middle')
       .attr('dy', '0.4em')
       .style('font-weight', 'bold')
       .style('font-size', this.fontSize)
       .text(percentageSum != 0 ? `${Math.round(percentageSum)}%` : '?');
+
+    that.gauge.selectAll('text,path')
+        .on('mouseover', function (d) {
+          if (that.onGaugeMouseOver) that.onGaugeMouseOver.call(this);
+        })
 
     this.draw();
   }
@@ -129,5 +134,11 @@ export default class CircularGauge {
       this.percentageText.text('?');
     }
     this.draw();
+  }
+
+  onMouseOver(arg) {
+      if (!arg) return;
+      this.onGaugeMouseOver = arg;
+      return this;
   }
 }

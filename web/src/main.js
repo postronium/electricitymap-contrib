@@ -147,6 +147,7 @@ const countryHistoryMixGraph = new AreaGraph('#country-history-mix', modeColor, 
 
 const countryTableExchangeTooltip = new Tooltip('#countrypanel-exchange-tooltip');
 const countryTableProductionTooltip = new Tooltip('#countrypanel-production-tooltip');
+const countryGaugeLowCarbon = new Tooltip('#renewable-tooltip');
 const countryTooltip = new Tooltip('#country-tooltip');
 const exchangeTooltip = new Tooltip('#exchange-tooltip');
 const priceTooltip = new Tooltip('#price-tooltip');
@@ -1029,6 +1030,16 @@ function renderGauges(state) {
     if (fossilFuelRatio != null)
       lowCarbPercentages.push(100 - (fossilFuelRatio * 100) - lowCarbProdSum);
     countryLowCarbonGauge.setPercentage(lowCarbPercentages);
+    countryLowCarbonGauge.onMouseOver(
+      () => {
+        tooltipHelper.showLowCarbon(
+          countryGaugeLowCarbon,
+          d, false,
+          co2color, co2Colorbars,
+          state.application.electricityMixMode
+        );
+        dispatchApplication('tooltipDisplayMode', "wind");
+      });
 
     //calculate and add imported renewable
     const renewableRatio = state.application.electricityMixMode === 'consumption'
